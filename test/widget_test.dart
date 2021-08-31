@@ -1,30 +1,76 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-
-import 'package:kutushita_uragaeshi/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+  runApp(MyApp());
+}
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MyHomePage(title: 'Flutter Demo Home Page'),
+    );
+  }
+}
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key? key, this.title}) : super(key: key);
+  final String? title;
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
-  });
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+  bool flag = false;
+
+  _click() async {
+    setState(() {
+      flag = !flag;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title!),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            AnimatedOpacity(
+                opacity: flag ? 0.1 : 1.0,
+                duration: Duration(seconds: 3),
+                child: Text(
+                  "消える文字",
+                  style: Theme.of(context).textTheme.headline4,
+                )),
+            AnimatedSize(
+                vsync: this,
+                duration: Duration(seconds: 3),
+                child: SizedBox(
+                    width: flag ? 50 : 200,
+                    height: flag ? 50 : 200,
+                    child: Container(color: Colors.purple))),
+            AnimatedAlign(
+                duration: Duration(seconds: 3),
+                alignment: flag ? Alignment.topLeft : Alignment.bottomRight,
+                child: SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: Container(color: Colors.green)))
+          ],
+        ),
+      ),
+      floatingActionButton:
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+        FloatingActionButton(onPressed: _click, child: Icon(Icons.add)),
+      ]),
+    );
+  }
 }
